@@ -48,7 +48,7 @@ jobs:
             echo "Build Successful"
       - run:
           name: Deploy to AWS S3
-          commands:
+          command:
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
@@ -78,14 +78,14 @@ jobs:
       - run:
           name: Build Project
           command: |
-          npm install
-          npm run build
-          cd build
-          zip ../build.zip -r * .[^.]*
-          echo "Build Successful"
+            npm install
+            npm run build
+            cd build
+            zip ../build.zip -r * .[^.]*
+            echo "Build Successful"
       - run:
           name: Deploy to AWS Cloudfront
-          commands:
+          command:
             aws configure set preview.cloudfront
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
