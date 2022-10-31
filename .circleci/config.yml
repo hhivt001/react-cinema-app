@@ -46,9 +46,9 @@ jobs:
             cd build
             zip ../build.zip -r * .[^.]*
             echo "Build Successful"
-      -run:
+      - run:
           name: Deploy to AWS S3
-          commmands:
+          commands:
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
@@ -83,9 +83,9 @@ jobs:
           cd build
           zip ../build.zip -r * .[^.]*
           echo "Build Successful"
-      -run:
+      - run:
           name: Deploy to AWS Cloudfront
-          commmands:
+          commands:
             aws configure set preview.cloudfront
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
