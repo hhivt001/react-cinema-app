@@ -48,7 +48,7 @@ jobs:
             echo "Build Successful"
       - run:
           name: Deploy to AWS S3
-          command:
+          command: |
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
@@ -74,7 +74,7 @@ jobs:
           command: |
             sudo apt -qq update -y
             sudo apt install awscli -y
-            sudo apt install python-pip python-dev build-essential -y
+            sudo apt install python-pip python2-dev build-essential -y
       - run:
           name: Build Project
           command: |
@@ -85,7 +85,7 @@ jobs:
             echo "Build Successful"
       - run:
           name: Deploy to AWS Cloudfront
-          command:
+          command: |
             aws configure set preview.cloudfront
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
