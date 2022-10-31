@@ -30,7 +30,7 @@ jobs:
       - checkout
       - run:
           name: Show Current Branch
-          command: echo {$CURRENT_BRANCH}
+          command: echo ${CURRENT_BRANCH}
       - run:
           name: Install AWS CLI
           working_directory: /
