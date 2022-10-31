@@ -29,15 +29,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Show Current Branch
+          name: Show current branch
           command: echo ${CURRENT_BRANCH}
       - run:
-          name: Install AWS CLI
+          name: Installing AWS CLI 
           working_directory: /
           command: |
-            sudo apt -qq update -y
-            sudo apt install awscli -y
-            sudo apt install python-pip python-dev build-essential -y
+            sudo apt-get -y -qq update
+            sudo apt-get install -y awscli
+            sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Build Project
           command: |
