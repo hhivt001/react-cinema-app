@@ -50,7 +50,7 @@ aliases:
           template: basic_success_1
   - &slack-notice-fail
     slack/notify:
-          event: pass
+          event: fail
           template: basic_fail_1
 
 jobs:
