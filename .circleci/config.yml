@@ -1,6 +1,5 @@
 version: 2.1
 orbs:
-   node: 'circleci/node:4.1'
    slack: circleci/slack@4.10.1
 
 executors:
@@ -57,7 +56,7 @@ jobs:
       - *save-cache
       - slack/notify:
           channel: ${SLACK_DEFAULT_CHANNEL}
-          event: success
+          event: pass
           template: basic_success_1
 
   linting:
