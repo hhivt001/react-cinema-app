@@ -44,6 +44,14 @@ aliases:
         cd build
         zip ../build.zip -r * .[^.]*
         echo "Build Successful"
+  - &slack-notice-pass
+    slack/notify:
+          event: pass
+          template: basic_success_1
+  - &slack-notice-fail
+    slack/notify:
+          event: pass
+          template: basic_fail_1
 
 jobs:
   build:
@@ -54,9 +62,8 @@ jobs:
       - *restore-cache
       - *install-dependencies
       - *save-cache
-      - slack/notify:
-          event: pass
-          template: basic_success_1
+      - *slack-notice-pass
+      - *slack-notice-fail
 
   linting:
     executor: app-executor
@@ -97,9 +104,8 @@ jobs:
             else 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
             fi
-      - slack/notify:
-          event: pass
-          template: basic_success_1
+      - *slack-notice-pass
+      - *slack-notice-fail
 
   deploy-to-aws-cloudfront:
     executor: app-executor
@@ -121,9 +127,8 @@ jobs:
             else 
               aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION_ID} --paths /\*
             fi
-      - slack/notify:
-          event: pass
-          template: basic_success_1
+      - *slack-notice-pass
+      - *slack-notice-fail
 
 workflows:
   build_and_deploy:
