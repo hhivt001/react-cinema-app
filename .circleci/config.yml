@@ -7,6 +7,10 @@ executors:
     docker:
       - image: cimg/node:lts
     working_directory: ~/repo
+  terraform-executor:
+    docker:
+      - image: hashicorp/terraform:latest
+
 
 aliases:
   - &show-current-branch-name
@@ -85,24 +89,66 @@ jobs:
           name: Run Prettier Check
           command: npm run prettier:check
 
+  terraform-validate:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - run:
+          name: Terraform Validate & Format
+          command: |
+            cd artifacts/infrastructure
+            terraform init -backend=false
+            terraform fmt -check
+            terraform validate
+
+  terraform-plan-and-apply:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - *show-current-branch-name
+      - run:
+          name: Terraform Plan
+          command: |
+            cd artifacts/infrastructure
+            terraform init
+            terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}  
+      - run:
+          name: Terraform Apply
+          command: |
+            cd artifacts/infrastructure
+            terraform workspace select ${CIRCLE_BRANCH}
+            terraform apply -auto-approve
+            terraform output hhreax_cinema_bucket_name >../hhreax_cinema_bucket_name.txt
+            terraform output cloudfront_distribution_id >../cloudfront_distribution_id.txt
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
+
   deploy-to-aws-s3:
     executor: app-executor
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - *show-current-branch-name
       - *install-aws-cli
       - *build-project
       - run:
           name: Deploy to AWS S3
           command: |
+            AWS_BUCKET_NAME=$(cat artifacts/hhreax_cinema_bucket_name.txt | sed 's/\"//g'))
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then 
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_STAGING} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             else 
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             fi
       - *slack-notice-pass
       - *slack-notice-fail
@@ -111,24 +157,41 @@ jobs:
     executor: app-executor
     steps:
       - checkout
+      - attach_workspce:
+          at: ./
       - *show-current-branch-name
       - *install-aws-cli
       - *build-project
       - run:
           name: Deploy to AWS Cloudfront
           command: |
+            CLOUDFRONT_DISTRIBUTION_ID=$(cat artifacts/cloudfront_distribution_id.txt | sed 's/\"//g'))
             aws configure set preview.cloudfront true
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
-              aws cloudfront create-invalidation --distribution-id ${PROD_DISTRIBUTION_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths /\*
             elif [ "${CURENT_BRANCH}" == "staging" ]
             then 
-              aws cloudfront create-invalidation --distribution-id ${STG_DISTRIBUTION_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths /\*
             else 
-              aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths /\*
             fi
       - *slack-notice-pass
       - *slack-notice-fail
+
+  terraform-destroy:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - run:
+          name: Terraform Destroy
+          command: |
+            cd artifacts/infrastructure/
+            terraform init
+            terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
+            terraform destroy --auto-approve
+
 
 workflows:
   build_and_deploy:
@@ -152,9 +215,27 @@ workflows:
 #                - develop
 #                - staging
 #                - master
-      - deploy-to-aws-s3:
+      - terraform-validate:
           requires:
             - linting
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - terraform-plan-and-apply:
+          requires:
+            - terraform-validate
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - deploy-to-aws-s3:
+          requires:
+            - terraform-plan-and-apply
           filters:
             branches:
               only:
@@ -174,3 +255,16 @@ workflows:
                 - master
           context:
             - slack-secrets
+      - hold:
+          type: approval
+          requires:
+            - deploy-to-aws-cloudfront   
+      - terraform-destroy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master         
