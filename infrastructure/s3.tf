@@ -53,12 +53,12 @@ data "aws_iam_policy_document" "hhreax_cinema_bucket_policy_document" {
 
     resources = [
       aws_s3_bucket.hhreax_cinema_bucket.arn,
-      "${aws_s3_bucket.hhreax_cinema_bucket.id}/*"
+      "${aws_s3_bucket.hhreax_cinema_bucket.arn}/*"
     ]
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.hhreax_cinema_cloudfront_origin.iam_arn}"]
+      identifiers = [aws_cloudfront_origin_access_identity.hhreax_cinema_cloudfront_origin.iam_arn]
     }
   }
 }
