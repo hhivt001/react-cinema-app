@@ -149,7 +149,7 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            AWS_BUCKET_NAME=$(cat artifacts/hhreax_cinema_bucket_name.txt | sed 's/\"//g'))
+            AWS_BUCKET_NAME=$(cat artifacts/hhreax_cinema_bucket_name.txt | sed 's/\"//g')
             echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
