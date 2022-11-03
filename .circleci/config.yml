@@ -20,7 +20,7 @@ aliases:
   - &restore-cache
      restore_cache:
        keys:
-         - app-{{ checksum "package-lock.json" }}	
+         - app-{{ checksum "package.json" }}	
          - app-
   - &install-dependencies
     run:
@@ -32,7 +32,7 @@ aliases:
     save_cache:
       paths:
         - node_modules
-      key: app-{{ checksum "package-lock.json" }}
+      key: app-{{ checksum "package.json" }}
   - &install-aws-cli
     run:
       name: Installing AWS CLI 
