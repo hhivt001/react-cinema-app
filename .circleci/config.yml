@@ -25,7 +25,9 @@ aliases:
   - &install-dependencies
     run:
       name: Install Dependencies
-      command: npm install
+      command: |
+        mkdir artifacts
+        npm install
   - &save-cache
     save_cache:
       paths:
@@ -68,7 +70,7 @@ jobs:
       - *save-cache
       - run:
           name: Create Artifact Folder & Copy Infrastructure For Persistence
-          command: mkdir artifacts && cp -r infrastructure artifacts/infrastructure
+          command: cp -r infrastructure artifacts/infrastructure
       - attach_workspace:
           at: ./
       - *slack-notice-pass
