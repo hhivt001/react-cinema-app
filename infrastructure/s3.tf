@@ -30,10 +30,10 @@ resource "aws_s3_bucket_versioning" "hhreax_cinema_bucket_versioning" {
   }
 }
 
-# resource "aws_s3_bucket_policy" "hhreax_cinema_bucket_policy" {
-#   bucket = aws_s3_bucket.hhreax_cinema_bucket.id
-#   policy = data.aws_iam_policy_document.hhreax_cinema_bucket_policy_document.json
-# }
+resource "aws_s3_bucket_policy" "hhreax_cinema_bucket_policy" {
+  bucket = aws_s3_bucket.hhreax_cinema_bucket.id
+  policy = data.aws_iam_policy_document.hhreax_cinema_bucket_policy_document.json
+}
 
 resource "aws_s3_bucket_website_configuration" "hhreax_cinema_website_config" {
   bucket = aws_s3_bucket.hhreax_cinema_bucket.id
@@ -47,18 +47,18 @@ resource "aws_s3_bucket_website_configuration" "hhreax_cinema_website_config" {
   }
 }
 
-# data "aws_iam_policy_document" "hhreax_cinema_bucket_policy_document" {
-#   statement {
-#     actions = ["s3:GetObject"]
+data "aws_iam_policy_document" "hhreax_cinema_bucket_policy_document" {
+  statement {
+    actions = ["s3:GetObject"]
 
-#     resources = [
-#       aws_s3_bucket.hhreax_cinema_bucket.arn,
-#       "${aws_s3_bucket.hhreax_cinema_bucket.id}/*"
-#     ]
+    resources = [
+      aws_s3_bucket.hhreax_cinema_bucket.arn,
+      "${aws_s3_bucket.hhreax_cinema_bucket.id}/*"
+    ]
 
-#     principals {
-#       type        = "AWS"
-#       identifiers = [aws_cloudfront_origin_access_identity.hhreax_cinema_cloudfront_origin.iam_arn]
-#     }
-#   }
-# }
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.hhreax_cinema_cloudfront_origin.iam_arn]
+    }
+  }
+}
