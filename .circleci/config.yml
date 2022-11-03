@@ -121,7 +121,7 @@ jobs:
       - run:
           name: Terraform Plan
           command: |
-            cd artifacts/infrastructure
+            cd infrastructure/
             terraform init
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}  
       - run:
