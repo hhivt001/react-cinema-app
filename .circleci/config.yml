@@ -69,10 +69,12 @@ jobs:
       - *install-dependencies
       - *save-cache
       - run:
-          name: Create Artifact Folder & Copy Infrastructure For Persistence
+          name: Copy Infrastructure For Persistence
           command: cp -r infrastructure artifacts/infrastructure
-      - attach_workspace:
-          at: ./
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
       - *slack-notice-pass
       - *slack-notice-fail
 
@@ -196,7 +198,7 @@ jobs:
       - run:
           name: Terraform Destroy
           command: |
-            cd artifacts/infrastructure/
+            cd infrastructure/
             terraform init
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
             terraform destroy --auto-approve
