@@ -68,7 +68,7 @@ jobs:
       - *save-cache
       - run:
           name: Create Artifact Folder & Copy Infrastructure For Persistence
-          command: cp -r infrastructure artifacts/infrastructure
+          command: mkdir artifacts && cp -r infrastructure artifacts/infrastructure
       - attach_workspace:
           at: ./
       - *slack-notice-pass
