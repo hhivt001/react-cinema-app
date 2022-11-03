@@ -3,5 +3,5 @@ output "hhreax_cinema_bucket_name" {
 }
 
 output "cloudfront_distribution_id" {
-    value = aws_cloudfront_distribution.hhreax_cinema_cloudfront_distribution.id
+  value = aws_cloudfront_distribution.hhreax_cinema_cloudfront_distribution.id
 }
