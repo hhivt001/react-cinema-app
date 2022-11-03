@@ -69,7 +69,7 @@ jobs:
       - run:
           name: Create Artifact Folder & Copy Infrastructure For Persistence
           command: cp -r infrastructure artifacts/infrastructure
-      - attach_to_workspace:
+      - attach_workspace:
           at: ./
       - *slack-notice-pass
       - *slack-notice-fail
