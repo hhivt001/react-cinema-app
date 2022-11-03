@@ -127,7 +127,7 @@ jobs:
       - run:
           name: Terraform Apply
           command: |
-            cd /infrastructure
+            cd artifacts/infrastructure
             terraform workspace select ${CIRCLE_BRANCH}
             terraform apply -auto-approve
             terraform output hhreax_cinema_bucket_name >../hhreax_cinema_bucket_name.txt
