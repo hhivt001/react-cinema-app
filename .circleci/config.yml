@@ -25,9 +25,7 @@ aliases:
   - &install-dependencies
     run:
       name: Install Dependencies
-      command: |
-        mkdir -p artifacts
-        npm install
+      command: npm install
   - &save-cache
     save_cache:
       paths:
@@ -70,11 +68,11 @@ jobs:
       - *save-cache
       - run:
           name: Copy Infrastructure For Persistence
-          command: cp -rf infrastructure artifacts/infrastructure
+          command: cp -rf infrastructure infrastructure2
       - persist_to_workspace:
           root: ./
           paths:
-            - artifacts
+            - infrastructure2
       - *slack-notice-pass
       - *slack-notice-fail
 
@@ -106,7 +104,7 @@ jobs:
       - run:
           name: Terraform Validate & Format
           command: |
-            cd artifacts/infrastructure
+            cd infrastructure2
             terraform init -backend=false
             terraform fmt -check
             terraform validate
@@ -121,13 +119,13 @@ jobs:
       - run:
           name: Terraform Plan
           command: |
-            cd artifacts/infrastructure
+            cd infrastructure2
             terraform init
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}  
       - run:
           name: Terraform Apply
           command: |
-            cd artifacts/infrastructure
+            cd infrastructure2
             terraform workspace select ${CIRCLE_BRANCH}
             terraform apply -auto-approve
             terraform output hhreax_cinema_bucket_name >../hhreax_cinema_bucket_name.txt
@@ -135,7 +133,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - artifacts
+            - infrastructure2
 
   deploy-to-aws-s3:
     executor: app-executor
@@ -149,7 +147,7 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            AWS_BUCKET_NAME=$(cat artifacts/hhreax_cinema_bucket_name.txt | sed 's/\"//g'))
+            AWS_BUCKET_NAME=$(cat infrastructure2/hhreax_cinema_bucket_name.txt | sed 's/\"//g'))
             echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
@@ -175,7 +173,7 @@ jobs:
       - run:
           name: Deploy to AWS Cloudfront
           command: |
-            CLOUDFRONT_DISTRIBUTION_ID=$(cat artifacts/cloudfront_distribution_id.txt | sed 's/\"//g'))
+            CLOUDFRONT_DISTRIBUTION_ID=$(cat infrastructure2/cloudfront_distribution_id.txt | sed 's/\"//g'))
             echo CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CURENT_BRANCH}" == "master" ]
