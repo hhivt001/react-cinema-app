@@ -26,7 +26,7 @@ aliases:
     run:
       name: Install Dependencies
       command: |
-        mkdir artifacts
+        mkdir -p artifacts
         npm install
   - &save-cache
     save_cache:
@@ -148,6 +148,7 @@ jobs:
           name: Deploy to AWS S3
           command: |
             AWS_BUCKET_NAME=$(cat artifacts/hhreax_cinema_bucket_name.txt | sed 's/\"//g'))
+            echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
@@ -173,6 +174,7 @@ jobs:
           name: Deploy to AWS Cloudfront
           command: |
             CLOUDFRONT_DISTRIBUTION_ID=$(cat artifacts/cloudfront_distribution_id.txt | sed 's/\"//g'))
+            echo CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CURENT_BRANCH}" == "master" ]
             then 
