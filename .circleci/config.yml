@@ -208,9 +208,9 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - linting:
-          requires:
-            - build
+ #     - linting:
+ #         requires:
+  #          - build
           filters:
             branches:
               only:
@@ -228,7 +228,8 @@ workflows:
 #                - master
       - terraform-validate:
           requires:
-            - linting
+ #           - linting
+             - build
           filters:
             branches:
               only:
