@@ -228,7 +228,7 @@ workflows:
 #                - master
       - terraform-validate:
           requires:
-            - build
+            - linting
           filters:
             branches:
               only:
