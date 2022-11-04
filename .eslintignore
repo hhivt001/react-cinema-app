@@ -1,3 +1,6 @@
+src/App.js
+src/App.test.js
+src/reportWebVitals.js
 **/node_modules/*
 **/out/*
 **/.next/*
