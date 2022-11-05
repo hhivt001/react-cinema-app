@@ -8,7 +8,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <div className="app">
-        <h1>HH Reacx Website </h1>
+        <h1>HH Reacx Restart Website </h1>
       </div>
     </Provider>
   );
