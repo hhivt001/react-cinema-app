@@ -29,7 +29,7 @@ const Grid = (props) => {
           <div key={uuidv4()}>
             <LazyImage className="grid-cell" src={`${IMAGE_URL}${data.poster_path}`} alt="placeholder">
               <div className="grid-read-more">
-              <button className="grid-cell-button">
+                <button className="grid-cell-button">
                   <Link to={`/${data.id}/${formatMovieTitle(data.title)}/details`}>Read More</Link>
                 </button>
               </div>
