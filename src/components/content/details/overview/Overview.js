@@ -72,7 +72,7 @@ const Overview = () => {
             <tbody>
               <tr>
                 <td>
-                  <img src="http://placehold.it/54x81" alt="" />
+                  <img src="https://pngimg.com/uploads/robot/robot_PNG7.png" alt="" />
                 </td>
                 <td>Robert Downing Jr.</td>
                 <td>Iron Man</td>
@@ -85,7 +85,7 @@ const Overview = () => {
         <div className="overview-detail">
           <h6>Production Companies</h6>
           <div className="product-company">
-            <img src="http://placehold.it/30x30" alt="" />
+            <img src="https://pngimg.com/uploads/robot/robot_PNG7.png" alt="" />
             <span>Marvel</span>
           </div>
         </div>
