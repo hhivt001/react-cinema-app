@@ -99,7 +99,7 @@
           height: 49px;
           line-height: 49px;
           display: flex;
-          font-size: 25px;
+          font-size: 18px;
           margin-bottom: 90px;
 
           .fas {
@@ -109,13 +109,15 @@
 
           span {
             color: #9aa9bb;
-            margin-top: -10px;
+            margin-left: 25px;
+            margin-top: -14px;
           }
 
           p {
-            color: #dd003f;
-            margin-left: 10px;
-            font-size: 18px;
+            color: #9aa9bb;
+            margin-left: 25px;
+            margin-top: 1px;
+            font-size: 14px;
           }
       }
   }
