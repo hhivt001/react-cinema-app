@@ -9,6 +9,7 @@ const Reviews = (props) => {
   const { movie } = props;
   const [reviews] = useState(movie[4]);
 
+  // prettier-ignore
   return (
     <>
       <div className="movie-reviews">
