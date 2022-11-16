@@ -81,7 +81,11 @@ const Overview = (props) => {
                 <tr>
                   <td>
                     <img
-                      src={data.profile_path ? `${IMAGE_URL}${data.profile_path}` : 'http://placehold.it/54x81'}
+                      src={
+                        data.profile_path
+                          ? `${IMAGE_URL}${data.profile_path}`
+                          : 'https://vectorified.com/images/no-profile-picture-icon-21.jpg'
+                      }
                       alt=""
                     />
                   </td>
@@ -98,7 +102,14 @@ const Overview = (props) => {
           <h6>Production Companies</h6>
           {details.production_companies.map((prod) => (
             <div className="product-company" key={uuidv4()}>
-              <img src={prod.logo_path ? `${IMAGE_URL}${prod.logo_path}` : 'http://placehold.it/30x30'} alt="" />
+              <img
+                src={
+                  prod.logo_path
+                    ? `${IMAGE_URL}${prod.logo_path}`
+                    : 'https://www.iconexperience.com/_img/v_collection_png/512x512/shadow/movie.png'
+                }
+                alt=""
+              />
               <span>{prod.name}</span>
             </div>
           ))}

@@ -28,7 +28,11 @@ const Crew = (props) => {
               <tr>
                 <td>
                   <img
-                    src={data.profile_path ? `${IMAGE_URL}${data.profile_path}` : 'http://placehold.it/54x81'}
+                    src={
+                      data.profile_path
+                        ? `${IMAGE_URL}${data.profile_path}`
+                        : 'https://vectorified.com/images/no-profile-picture-icon-21.jpg'
+                    }
                     alt=""
                   />
                 </td>
