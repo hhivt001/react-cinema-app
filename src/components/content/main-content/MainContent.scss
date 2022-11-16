@@ -8,9 +8,11 @@
     grid-template-columns: max-content 1fr max-content;
     grid-template-rows: 1fr;
     margin-bottom: 30px;
-    font-size: 18px;
+    font-size: 20px;
     color: #ffffff;
     width: inherit;
+    font-weight: bold;
+    padding-left: 24px;
     
     .movieType: {
         grid-area: movieType;
