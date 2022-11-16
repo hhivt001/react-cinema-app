@@ -10,7 +10,11 @@ executors:
   terraform-executor:
     docker:
       - image: hashicorp/terraform:latest
-
+  docker-publisher:
+    environment:
+      IMAGE_NAME: hhivt001/hhcinema
+    docker:
+      - image: circleci/buildpack-deps:stretch
 
 aliases:
   - &show-current-branch-name
@@ -106,7 +110,28 @@ jobs:
       - *restore-cache
       - run:
           name: Run Unit Test
-          command: npm run test       
+          command: npm run test  
+
+  publish-to-docker-hub:
+    exeuctor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *restore-cache
+      - run: docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_PASSWORD}"
+      - run: docker build -t ${IMAGE_NAME}:latest .
+      - run:
+          name: Tag and Push to Docker Hub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then
+              docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:prod-${CIRCLE_BUILD_NUM} && docker push ${IMAGE_NAME}:prod-${CIRCLE_BUILD_NUM}
+            elif [ "${CIRCLE_BRANCH" == "staging" ]
+            then
+              docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:staging-${CIRCLE_BUILD_NUM} && docker push ${IMAGE_NAME}:staging-${CIRCLE_BUILD_NUM}
+            else
+              docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:dev-${CIRCLE_BUILD_NUM} && docker push ${IMAGE_NAME}:dev-${CIRCLE_BUILD_NUM}
+            fi
 
   terraform-validate:
     executor: terraform-executor
@@ -213,7 +238,6 @@ jobs:
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
             terraform destroy --auto-approve
 
-
 workflows:
   build_and_deploy:
     jobs:
@@ -245,12 +269,19 @@ workflows:
               only:
                 - develop
                 - staging
+                - master
+      - publish-to-docker-hub:
+          requires:
+            - unit-test
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
                 - master 
       - terraform-validate:
           requires:
-            - linting
-            - prettier
-            - unit-test
+            - publish-to-docker-hub
           filters:
             branches:
               only:
