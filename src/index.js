@@ -7,6 +7,8 @@ import App from './App';
 import store from './redux/store';
 import reportWebVitals from './reportWebVitals';
 
+Sentry.init({ dsn: process.env.REACT_APP_SENTRY_DSN });
+
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,
