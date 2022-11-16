@@ -260,69 +260,70 @@ workflows:
                 - develop
                 - staging
                 - master
-      - unit-test:
-          requires:
-            - linting
-            - prettier
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-      - publish-to-docker-hub:
-          requires:
-            - unit-test
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master 
-      - terraform-validate:
-          requires:
-            - publish-to-docker-hub
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-      - terraform-plan-and-apply:
-          requires:
-            - terraform-validate
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-      - deploy-to-aws-s3:
-          requires:
-            - terraform-plan-and-apply
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-          context:
-            - slack-secrets
-      - deploy-to-aws-cloudfront:
-          requires:
-            - deploy-to-aws-s3
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-          context:
-            - slack-secrets
+      # - unit-test:
+      #     requires:
+      #       - linting
+      #       - prettier
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - publish-to-docker-hub:
+      #     requires:
+      #       - unit-test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master 
+      # - terraform-validate:
+      #     requires:
+      #       - publish-to-docker-hub
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - terraform-plan-and-apply:
+      #     requires:
+      #       - terraform-validate
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - deploy-to-aws-s3:
+      #     requires:
+      #       - terraform-plan-and-apply
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      #     context:
+      #       - slack-secrets
+      # - deploy-to-aws-cloudfront:
+      #     requires:
+      #       - deploy-to-aws-s3
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      #     context:
+      #       - slack-secrets
       - hold:
           type: approval
           requires:
-            - deploy-to-aws-cloudfront   
+            - linting
+            - prettier   
       - terraform-destroy:
           requires:
             - hold
