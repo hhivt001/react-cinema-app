@@ -319,16 +319,16 @@ workflows:
                 - master
           context:
             - slack-secrets
-      # - hold:
-      #     type: approval
-      #     requires:
-      #       - deploy-to-aws-cloudfront   
-      # - terraform-destroy:
-      #     requires:
-      #       - hold
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - master         
+      - hold:
+          type: approval
+          requires:
+            - deploy-to-aws-cloudfront   
+      - terraform-destroy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master         
