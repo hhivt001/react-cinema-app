@@ -113,7 +113,7 @@ jobs:
           command: npm run test  
 
   publish-to-docker-hub:
-    exeuctor: docker-publisher
+    executor: docker-publisher
     steps:
       - checkout
       - setup_remote_docker
